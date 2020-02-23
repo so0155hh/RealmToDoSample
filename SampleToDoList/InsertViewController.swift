@@ -44,5 +44,4 @@ class InsertViewController: UIViewController {
             toDoSwitch.isOn = goodToDo.isDone
         }
     }
-    
 }
