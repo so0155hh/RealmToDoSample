@@ -7,24 +7,42 @@
 //
 
 import UIKit
+import RealmSwift
 
 class InsertViewController: UIViewController {
+    
+    var incomingTodo: ToDo? = nil
+    let realm = try! Realm()
+    
+    @IBOutlet weak var toDoTextField: UITextField!
+    @IBOutlet weak var toDoSwitch: UISwitch!
+    
+    @IBAction func saveBtn(_ sender: Any) {
+        //登録されたToDoを変更した際に反映
+        if let goodToDo = incomingTodo {
+            try! realm.write {
+                goodToDo.isDone = toDoSwitch.isOn
+                goodToDo.toDoText = toDoTextField.text!
+            }
+        } else {
+            //新規登録のToDoをTopMenuに反映
+            let todo = ToDo()
+            todo.toDoText = toDoTextField.text!
+            todo.isDone = toDoSwitch.isOn
 
+            try! realm.write {
+                realm.add(todo)
+            }
+        }
+        //1つ前の画面に戻る
+        navigationController?.popViewController(animated: true)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        if let goodToDo = incomingTodo {
+            toDoTextField.text = goodToDo.toDoText
+            toDoSwitch.isOn = goodToDo.isDone
+        }
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
